@@ -27,7 +27,7 @@ function updateButton() {
 
 function skip() {
   // console.log(this.dataset.skip);
-  video.currentTime += parseFloat(this.dataset.skip);
+  video.currentTime += parseFloat(this.dataset.skip); // The parseFloat() function parses an argument (converting it to a string first if needed) and returns a floating point number.
 }
 
 function handleRangeUpdate() {

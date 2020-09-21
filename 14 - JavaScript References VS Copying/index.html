@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>JS Reference VS Copy</title>
+  </head>
+  <body>
+    <script>
+      // start with strings, numbers and booleans
+
+      let age = 100;
+      let age2 = age; // age2 is a copy of age
+      console.log(age, age2);
+      age = 200;
+      console.log(age, age2);
+
+      let name = "Wes";
+      let name2 = name;
+      console.log(name, name2);
+      name = "Wesley";
+      console.log(name, name2);
+
+      // Let's say we have an array
+      const players = ["Wes", "Sarah", "Ryan", "Poppy"];
+
+      // and we want to make a copy of it.
+
+      const team = players;
+      console.log(players, team);
+
+      // You might think we can just do something like this:
+
+      team[3] = "Lux"; // team is a reference to the original array, which is players.
+      // When you edit the original array, it's going to go back to the reference and change that too.
+      // This has changed both team and players.
+      console.log(players, team);
+      // What we really want to do is make a copy of the array and then update it.
+
+      // however what happens when we update that array?
+
+      // now here is the problem!
+
+      // oh no - we have edited the original array too!
+
+      // Why? It's because that is an array reference, not an array copy. They both point to the same array!
+
+      // So, how do we fix this? We take a copy instead!
+
+      const team2 = players.slice(); // Slice takes a copy of the entire array when nothing is passed in. Returns entire array
+      console.log(players.slice(2, 3));
+      console.log(team2);
+
+      team2[3] = "Beth"; // updated team2 but not players
+      console.log(team2, players);
+
+      // one way
+
+      // or create a new array and concat the old one in
+
+      const team3 = [].concat(players); // creates a new array
+      console.log(team3);
+
+      // or use the new ES6 Spread
+
+      const team4 = [...players];
+      console.log(team4);
+      team4[3] = "Andreas"; // team4 has been updated and players remains unchanged
+      console.log(team4, players);
+
+      const team5 = Array.from(players);
+      console.log(team5);
+      team5[3] = "Dahlia";
+      console.log(team5, players);
+
+      // now when we update it, the original one isn't changed
+
+      // The same thing goes for objects, let's say we have a person object
+
+      // with Objects
+      const person = {
+        name: "Wes Bos",
+        age: 80,
+      };
+
+      // and think we make a copy:
+
+      const captain = person;
+      captain.number = 99; // person has also been changed
+      console.log(captain, person);
+
+      // how do we take a copy instead?
+
+      const captain2 = Object.assign({}, person, {
+        name: "Andreas",
+        number: 50,
+        age: 40,
+      });
+      // Here we are taking a blank object, copying in the details from person, and then changing them in the third arguement.
+      console.log(captain2, person);
+
+      // We will hopefully soon see the object ...spread
+
+      const captain3 = { ...person };
+
+      // Things to note - this is only 1 level deep - both for Arrays and Objects. lodash has a cloneDeep method, but you should think twice before using it.
+
+      const wes = {
+        name: "Wes",
+        age: 100,
+        social: {
+          twitter: "@wesbos",
+          facebook: "wesbos.developer",
+        },
+      };
+      console.clear();
+      console.log(wes);
+
+      // To make a copy of wes...
+
+      const dev = Object.assign({}, wes);
+      console.log(dev);
+      dev.name = "Wesley"; // dev is changed, but Wes isn't. Dev is a copy, not a reference.
+      console.log(dev);
+
+      console.log(dev.social);
+      dev.social.twitter = "@coolman"; // this changes both dev and wes.
+      // because when you do Object.assign it only does one level deep.
+      // you would need to go online and find a function called cloneDeep to make a clone to avoid this problem.
+      console.log(dev.social);
+      console.log(wes.social);
+
+      // Poor man's deep clone...
+
+      const dev2 = JSON.parse(JSON.stringify(wes));
+      console.log(dev2);
+      dev2.social.twitter = "@notSoCoolMan";
+      console.log(dev2.social);
+      console.log(wes.social); // remains unchanged
+    </script>
+  </body>
+</html>
