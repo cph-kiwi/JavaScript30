@@ -75,6 +75,7 @@
       function populateList(plates = [], platesList) {
         platesList.innerHTML = plates
           .map((plate, i) => {
+            // map is going to return an array so we have to add .join on the end to turn in back into a string.
             return `
   <li>
     <input type="checkbox" data-index=${i} id="item${i}" ${
@@ -84,7 +85,7 @@
     </li>
   `;
           })
-          .join("");
+          .join(""); // we want one long string (because this is how it is stored in local storage), not multiple strings for each list item.
       }
 
       function toggleStatus(e) {
