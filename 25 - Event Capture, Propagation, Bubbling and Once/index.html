@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Understanding JavaScript's Capture</title>
+  </head>
+  <body class="bod">
+    <div class="one">
+      <div class="two">
+        <div class="three"></div>
+      </div>
+    </div>
+
+    <style>
+      html {
+        box-sizing: border-box;
+      }
+
+      *,
+      *:before,
+      *:after {
+        box-sizing: inherit;
+      }
+
+      div {
+        width: 100%;
+        padding: 100px;
+      }
+
+      .one {
+        background: thistle;
+      }
+
+      .two {
+        background: mistyrose;
+      }
+
+      .three {
+        background: coral;
+      }
+    </style>
+
+    <button></button> // 4
+    <script>
+      const divs = document.querySelectorAll("div"); // 1
+      const button = document.querySelector("button"); // 5
+
+      function logText(e) {
+        // 2
+        console.log(this.classList.value);
+        // e.stopPropagation(); // stop bubbling up!
+        // console.log(this);
+      }
+
+      // capture goes top down, rippling through the elements. Once the event fires, it bubbles up from the bottom to the top. Once the click event is triggered it fires up from the bottom to the top.
+
+      divs.forEach((
+        div // 3
+      ) =>
+        div.addEventListener("click", logText, {
+          // capture: true, means that the event will get fired on the capture down, not on the bubble up.
+          capture: false, // it is false by default
+          once: true, // this listens for a click, and then unbinds itself from the event listener.
+        })
+      );
+
+      // once: true, is the same as saying the following...
+      // div.removeEventListener('click', logText);
+
+      button.addEventListener(
+        //6
+        "click",
+        () => {
+          console.log("Click!!!");
+        },
+        {
+          once: true,
+        }
+      );
+    </script>
+  </body>
+</html>
