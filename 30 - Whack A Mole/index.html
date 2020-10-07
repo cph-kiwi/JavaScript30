@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Whack A Mole!</title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Amatic+SC:400,700"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>Whack-a-mole! <span class="score">0</span></h1>
+    <button onClick="startGame()">Start!</button>
+
+    <div class="game">
+      <div class="hole hole1">
+        <div class="mole"></div>
+      </div>
+      <div class="hole hole2">
+        <div class="mole"></div>
+      </div>
+      <div class="hole hole3">
+        <div class="mole"></div>
+      </div>
+      <div class="hole hole4">
+        <div class="mole"></div>
+      </div>
+      <div class="hole hole5">
+        <div class="mole"></div>
+      </div>
+      <div class="hole hole6">
+        <div class="mole"></div>
+      </div>
+    </div>
+
+    <script>
+      const holes = document.querySelectorAll(".hole");
+      const scoreBoard = document.querySelector(".score");
+      const moles = document.querySelectorAll(".mole");
+      // we don't want the mole to pop out of the same hole twice in a row so...
+      let lastHole;
+      // Create a variable to track if the game is finished
+      let timeUp = false;
+      // need a variable to track the score
+      let score = 0;
+
+      // First we need a function that is going to give us a random amount of time between a min and max.
+      // This is a utility function
+      function randomTime(min, max) {
+        return Math.round(Math.random() * (max - min) + min);
+      }
+
+      // Next we need to write a function to pick a hole for the mole to pop up from
+      function randomHole(holes) {
+        console.log(holes.length);
+        const index = Math.floor(Math.random() * holes.length);
+        const hole = holes[index];
+        // The next bit checks if the new hole is the same as the last one, in which case it runs the function again to find a new hole.
+        if (hole === lastHole) {
+          console.log("Ah nah, that's the same one buddy");
+          return randomHole(holes);
+        }
+        // console.log(hole);
+        lastHole = hole; // this saves a reference to the number hole that popped up last time this function was called
+        return hole;
+      }
+
+      // now we need to get the moles popping up from the holes.
+      function peep() {
+        const time = randomTime(200, 1000); // between 200 miliseconds and 1 second
+        const hole = randomHole(holes);
+        console.log({ time, hole });
+        hole.classList.add("up"); // This connects to the CSS and the mole pops up
+        // after a random amount of time, we need to remove the mole from the hole by removing the class
+        setTimeout(() => {
+          hole.classList.remove("up");
+          // Unless the game is over, we need to run peep again.
+          if (!timeUp) peep();
+        }, time);
+      }
+
+      function startGame() {
+        scoreBoard.textContent = 0;
+        timeUp = false;
+        score = 0;
+        peep();
+        setTimeout(() => (timeUp = true), 10000); // Game lasts for 10 seconds
+      }
+
+      // When you hit a mole it needs to react by score increase and mole goes away.
+      function bonk(e) {
+        console.log(e);
+        if (!e.isTrusted) return; // isTrusted is a property of the click event. This detects cheating.
+        score++;
+        this.classList.remove("up");
+        scoreBoard.textContent = score;
+      }
+
+      moles.forEach((mole) => mole.addEventListener("click", bonk));
+    </script>
+  </body>
+</html>
